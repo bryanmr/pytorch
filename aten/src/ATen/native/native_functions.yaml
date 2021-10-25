@@ -645,6 +645,7 @@
   variants: function, method
   device_check: NoCheck
   device_guard: False
+  tags: inplace_view
   dispatch:
     CompositeExplicitAutograd: as_strided_
 
@@ -3881,6 +3882,7 @@
 # this. If this `Variable` is a view, throws an `std::runtime_error()`.
 - func: detach_(Tensor(a!) self) -> Tensor(a!)
   variants: function, method
+  tags: inplace_view
   dispatch:
     CompositeExplicitAutograd: detach_
 
@@ -4034,6 +4036,7 @@
   variants: method
   device_check: NoCheck
   device_guard: False
+  tags: inplace_view
   dispatch:
     CompositeExplicitAutograd: squeeze_
 
@@ -4041,6 +4044,7 @@
   variants: method
   device_check: NoCheck
   device_guard: False
+  tags: inplace_view
   dispatch:
     CompositeExplicitAutograd: squeeze_
 
@@ -4048,6 +4052,7 @@
   variants: method
   device_check: NoCheck
   device_guard: False
+  tags: inplace_view
 
 - func: sspaddmm(Tensor self, Tensor mat1, Tensor mat2, *, Scalar beta=1, Scalar alpha=1) -> Tensor
   variants: function, method
@@ -4279,6 +4284,7 @@
   device_check: NoCheck
   device_guard: False
   variants: method
+  tags: inplace_view
   dispatch:
     CompositeExplicitAutograd: t_
 
@@ -4385,6 +4391,7 @@
   variants: method
   device_check: NoCheck
   device_guard: False
+  tags: inplace_view
   dispatch:
     CompositeExplicitAutograd: transpose_
 
@@ -4521,6 +4528,7 @@
   variants: method
   device_check: NoCheck
   device_guard: False
+  tags: inplace_view
   dispatch:
     CompositeExplicitAutograd: unsqueeze_
 
@@ -6806,6 +6814,7 @@
   variants: method
   device_check: NoCheck
   device_guard: False
+  tags: inplace_view
 
 # swapdims, alias for transpose
 - func: swapdims(Tensor(a) self, int dim0, int dim1) -> Tensor(a)
@@ -6817,6 +6826,7 @@
   variants: method
   device_check: NoCheck
   device_guard: False
+  tags: inplace_view
 
 - func: cholesky.out(Tensor self, bool upper=False, *, Tensor(a!) out) -> Tensor(a!)
   dispatch:
