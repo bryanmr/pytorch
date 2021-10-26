@@ -387,6 +387,11 @@ std::vector<ExprHandle> TensorExprKernel::sizesForValue(
   if (v->type()->isSubtypeOf(*NoneType::get())) {
     return {};
   }
+  if (v->type()->kind() == TypeKind::ClassType) {
+    // TODO: By prepack class name run corresponding op with random inputs with
+    // the same sizes and get the size of the result.
+    return {int64_t{1024}};
+  }
   GRAPH_DEBUG("Unknown sizes for the node: ", *v->node());
   GRAPH_DEBUG("Full fusion group graph:\n", *v->node()->owningGraph());
   std::string msg = std::string("Unhandled node kind (in sizesForValue): ") +
@@ -1047,11 +1052,13 @@ void TensorExprKernel::bindConstant(const torch::jit::Value* v) {
   auto val = toIValue(v).value();
   if (torch::isCustomClass(val)) {
     auto name_hint = "const_" + sanitizeName(v->debugName());
-    auto dtype = Dtype(ScalarType::Float);
+    auto dtype = Dtype(ScalarType::Char);
     std::vector<ExprPtr> dims;
     BufPtr buf = alloc<Buf>(name_hint, dims, dtype);
     auto dataPtr = val.toObjectRef().getSlot(0).toCapsule().get();
-    constants_.push_back({buf, dataPtr});
+    // constants_.push_back({buf, dataPtr});
+    dims.push_back(alloc<LongImm>(sizeof(dataPtr)));
+    constants_.push_back({buf, nullptr, const_cast<Node*>(v->node())});
     bufs_[v] = buf;
     return;
   }
