@@ -10,6 +10,7 @@ import traceback
 import types
 import unittest
 from contextlib import contextmanager
+from dataclasses import dataclass
 from datetime import timedelta
 from enum import Enum
 from functools import partial, reduce
@@ -61,6 +62,30 @@ TEST_SKIPS = {
         86, "Test skipped at subprocess level, look at subprocess log for skip reason"
     ),
 }
+
+@dataclass
+class DistTestCases:
+    # Messages to be used when skipping a test
+    skip_messages = {}
+    skip_messages["ddp"] = "Only the NCCL and GLOO backends support DistributedDataParallel"
+    skip_messages["subgroups"] = "MPI backend does not support creating subgroups on CUDA devices"
+    skip_messages["cuda hooks"] = "MPI backend does not support DDP communication hook on CUDA devices"
+    skip_messages["plugin"] = "Plugins do not have a consistent case"
+
+    # Backends that do not support a specific collective
+    skip_collective = {}
+    skip_collective["allgather_coalesced"] = {"nccl", "mpi"}
+    skip_collective["gather"] = {"nccl"}
+    skip_collective["scatter"] = {"nccl"}
+    skip_collective["reduce"] = {None}  # type: ignore[arg-type]
+
+    # Sets showing that something is implemented
+    backend_feature = {}
+    backend_feature["gpu"] = {"nccl", "gloo"}
+    backend_feature["cuda"] = {"nccl", "gloo"}
+    backend_feature["ddp"] = {"nccl", "gloo"}
+    backend_feature["subgroup"] = {"nccl", "gloo"}
+    backend_feature["plugin"] = {None}  # type: ignore[arg-type]
 
 
 def skip_if_no_gpu(func):
